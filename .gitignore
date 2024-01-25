@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database files
+*.sqlite3
+
+# Static files (usually collected by Django's collectstatic)
+/static/
+
+# Media files
+/media/
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Django local settings
+local_settings.py
+
+# Ignore migrations, as they are usually generated and contain sensitive information
+**/migrations/
+
+# Ignore sensitive files
+*.secret_key
+
+# Ignore IDE files and directories
+.vscode/
+.idea/
+
+# Ignore system and temporary files
+*.log
+*.swp
+*.swo
+*.tmp
+*~
+
+# Ignore database backups
+*.bak
+*.dump
+
+# Ignore environment specific files
+.env
+*.env.*

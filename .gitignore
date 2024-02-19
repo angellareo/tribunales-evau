@@ -44,3 +44,6 @@ local_settings.py
 # Ignore environment specific files
 .env
 *.env.*
+
+# Node files
+.node_modules/

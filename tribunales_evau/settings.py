@@ -27,11 +27,14 @@ SECRET_KEY = 'django-insecure-_=7lj3vmkfxx!__)j)rh7j5wkkr9wdb7yw)eyzivyg5!k@x_s)
 DEBUG = True
 
 ALLOWED_HOSTS = []
+ALLOWED_HOSTS += config('ALLOWED_HOSTS').split(',')
 
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS').split(',')
 
 # Application definition
 
 INSTALLED_APPS = [
+    'tribunales_evau',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tribunales_evau.wsgi.application'
+ASGI_APPLICATION = 'tribunales_evau.asgi.application'
 
 
 # Database
@@ -127,6 +131,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

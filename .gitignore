@@ -45,5 +45,5 @@ local_settings.py
 .env
 *.env.*
 
-# Node files
-.node_modules/
+# Node modules
+node_modules/

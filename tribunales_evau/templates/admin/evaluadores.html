@@ -1,0 +1,8 @@
+{% extends 'admin/change_form.html' %}
+{% load i18n admin_urls %}
+
+{% block object-tools %}
+    <a href="import-agg-csv/">Import aggregated CSV</a>
+    <br />
+    {{ block.super }}
+{% endblock %}

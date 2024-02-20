@@ -47,3 +47,6 @@ local_settings.py
 
 # Node modules
 node_modules/
+
+# Vue assets
+tribunales_evau/static/vue/

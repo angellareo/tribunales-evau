@@ -1,25 +1,23 @@
-import { fileURLToPath, URL } from 'node:url'
-import { resolve } from 'node:path';
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+import {fileURLToPath, URL} from 'node:url'
 
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
+import {resolve} from 'path'
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+import {splitVendorChunkPlugin} from 'vite'
 
-// Check: https://github.com/ilikerobots/cookiecutter-vue-django/blob/vue3-vite/%7B%7Bcookiecutter.project_slug%7D%7D/vue_frontend/vite.config.js
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    cssInjectedByJsPlugin({jsAssetsFilterFunction: () => true}),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+  server: {
+    port: 5173,
+    host: true,
+    strictPort: true,
   },
   build: {
     rollupOptions: {
       input: {
         main: resolve('./src/main.js'),
+        reward: resolve('./src/reward.js'),
       },
       output: {
         dir: '../tribunales_evau/static/vue/',
@@ -27,4 +25,14 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    vue(),
+    cssInjectedByJsPlugin({jsAssetsFilterFunction: () => true}),
+    splitVendorChunkPlugin(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }
 })

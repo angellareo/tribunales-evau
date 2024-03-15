@@ -1,10 +1,8 @@
-# from django.urls import path
+from django.urls import path
 
-# from tribunales_evau.tribunales.views import user_detail_view, user_redirect_view, user_update_view
+from .views import MovesView
 
 app_name = "tribunales"
 urlpatterns = [
-    # path("~redirect/", view=user_redirect_view, name="redirect"),
-    # path("~update/", view=user_update_view, name="update"),
-    # path("<int:pk>/", view=user_detail_view, name="detail"),
+    path("", MovesView.as_view(), name="moves"),
 ]

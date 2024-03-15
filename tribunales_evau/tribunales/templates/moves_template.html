@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Moves Details</h1>
+  <!-- Dropdown form to select asignatura -->
+  <form action="{% url 'tribunales:moves' %}" method="get">
+    <label for="asignatura">Select Asignatura:</label>
+    <select name="asignatura" id="asignatura">
+      {% for asignatura in asignaturas %}<option value="{{ asignatura.id }}">{{ asignatura.name }}</option>{% endfor %}
+    </select>
+    <button type="submit">Select</button>
+  </form>
+  <!-- Display mean and total moves -->
+  {% if mean %}
+    <!-- data is present -->
+    <p>Mean: {{ mean }}</p>
+    <p>Total Moves: {{ total_moves }}</p>
+    <!-- Table to show move details -->
+    <table>
+      <thead>
+        <tr>
+          <th>From HQ</th>
+          <th>To HQ</th>
+          <th>Moves</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for move in move_details %}
+          <tr>
+            <td>{{ move.from_hq }}</td>
+            <td>{{ move.to_hq }}</td>
+            <td>{{ move.moves }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock content %}

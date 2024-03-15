@@ -32,7 +32,7 @@ class CsvImportForm(forms.Form):
 
 @admin.register(Headquarter)
 class HeadquarterAdmin(admin.ModelAdmin, ExportCsvMixin):
-    add_form_template = "admin/evaluadores.html"
+    add_form_template = "admin/headquarters.html"
 
     actions = ["export_as_csv"]
 
@@ -60,7 +60,8 @@ class HeadquarterAdmin(admin.ModelAdmin, ExportCsvMixin):
         return (
             "sede_data" in request.session
             and "asignatura_data" in request.session
-            and "evaluador_data" in request.session
+            and "examenes_data"
+            and "evaluadores_data" in request.session
         )
 
     def load_csv_data(self, request):

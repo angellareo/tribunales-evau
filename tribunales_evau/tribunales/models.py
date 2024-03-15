@@ -6,17 +6,9 @@ class Sede(models.Model):
     UBICACION = models.CharField(max_length=100)
 
 
-#    class Meta:
-#        app_label = 'tribunales'
-
-
 class Asignatura(models.Model):
     COD_ASIGNATURA = models.AutoField(primary_key=True)
     ASIGNATURA = models.CharField(max_length=100)
-
-
-#    class Meta:
-#        app_label = 'tribunales'
 
 
 class Headquarter(models.Model):
@@ -26,7 +18,4 @@ class Headquarter(models.Model):
     EXAMENES = models.IntegerField()
 
     class Meta:
-        verbose_name_plural = "Evaluadores"
-
-
-#        app_label = 'tribunales'
+        verbose_name_plural = "Headquarters"

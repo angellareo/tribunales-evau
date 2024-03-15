@@ -1,0 +1,21 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+  <div>
+    {% if request.session.sede_data and request.session.asignatura_data and request.session.evaluador_data %}
+      <!-- CSV data is present in session -->
+      <form action="." method="post">
+        {% csrf_token %}
+        <button type="submit">Import data</button>
+      </form>
+    {% else %}
+      <!-- CSV data is not present in session -->
+      <form action="." method="post" enctype="multipart/form-data">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="submit">Upload CSV</button>
+      </form>
+    {% endif %}
+  </div>
+  <br />
+{% endblock content %}

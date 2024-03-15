@@ -6,15 +6,27 @@ class Sede(models.Model):
     UBICACION = models.CharField(max_length=100)
 
 
+#    class Meta:
+#        app_label = 'tribunales'
+
+
 class Asignatura(models.Model):
     COD_ASIGNATURA = models.AutoField(primary_key=True)
     ASIGNATURA = models.CharField(max_length=100)
 
 
-class Evaluador(models.Model):
+#    class Meta:
+#        app_label = 'tribunales'
+
+
+class Headquarter(models.Model):
     COD_SEDE = models.ForeignKey(Sede, on_delete=models.CASCADE)
     COD_ASIGNATURA = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
-    TOTAL = models.IntegerField()
+    EVALUADORES = models.IntegerField()
+    EXAMENES = models.IntegerField()
 
     class Meta:
         verbose_name_plural = "Evaluadores"
+
+
+#        app_label = 'tribunales'

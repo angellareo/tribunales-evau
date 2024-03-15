@@ -60,3 +60,4 @@ VUE_FRONTEND_USE_DEV_SERVER = True
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+# INSTALLED_APPS += ["tribunales"]

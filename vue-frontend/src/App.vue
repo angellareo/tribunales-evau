@@ -6,13 +6,16 @@ import IconVue from "@/components/icons/IconVue.vue";
 
 <template>
   <header>
-    <IconVue class="logo" width="125" height="125" />
+    <!-- <IconVue class="logo" width="125" height="125" /> -->
+    <img alt="UAM logo" class="logo" src="./assets/logo.png" width="300" />
 
+    <!--
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
       <hr style="height: 1rem;"/>
       <div>For more Vue integration tips and techniques, check out <b>Vue Demo</b> from the navigation menu above.</div>
     </div>
+    -->
   </header>
 
   <main>
@@ -34,7 +37,10 @@ header {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    padding-top: calc(var(--section-gap) / 2);
+    padding-bottom: calc(var(--section-gap) / 2);
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .logo {

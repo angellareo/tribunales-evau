@@ -103,6 +103,7 @@ LOCAL_APPS = [
     # Your stuff: custom apps go here
     "django_vue_utilities",
     "tribunales_evau.tribunales",
+    "import_export",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

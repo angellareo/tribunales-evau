@@ -1,10 +1,14 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from pulp import LpMinimize, LpProblem, LpVariable, lpSum, value
 from pulp.apis import PULP_CBC_CMD
-from tribunales.models import Asignatura, Headquarter
+from tribunales.models import Asignatura, Headquarter, Sede
+
+logger = logging.getLogger(__name__)
 
 
 class MovesView(LoginRequiredMixin, View):
@@ -23,6 +27,10 @@ class MovesView(LoginRequiredMixin, View):
                 headquarter_data[sede_id] = {"exams": 0, "evals": 0}
             headquarter_data[sede_id]["exams"] += headquarter.EXAMENES
             headquarter_data[sede_id]["evals"] += headquarter.EVALUADORES
+
+        if sum(data["evals"] for data in headquarter_data.values()) == 0:
+            logger.info("No data in DB")
+            return {"mean": None, "total_moves": None, "move_details": None}
 
         # Calculate mean
         mean = sum(data["exams"] for data in headquarter_data.values()) // sum(
@@ -84,7 +92,9 @@ class MovesView(LoginRequiredMixin, View):
         for i in HQ:
             for j in HQ:
                 if value(moves[i][j]) > 0:
-                    move_details.append({"from_HQ": i, "to_HQ": j, "num_moves": int(value(moves[i][j]))})
+                    from_sede = Sede.objects.get(COD_SEDE=i).UBICACION
+                    to_sede = Sede.objects.get(COD_SEDE=j).UBICACION
+                    move_details.append({"from_HQ": from_sede, "to_HQ": to_sede, "num_moves": int(value(moves[i][j]))})
         return {"mean": mean, "total_moves": total_moves, "move_details": move_details}
 
     def get(self, request):
@@ -92,8 +102,9 @@ class MovesView(LoginRequiredMixin, View):
         self.asignaturas = Asignatura.objects.all()
 
         cod_asignatura = request.GET.get("asignatura")
+
         # Assuming you have a function to get moves
-        if cod_asignatura:
+        if cod_asignatura is not None:
             move_data = self.get_moves(cod_asignatura)
 
             return render(
@@ -101,6 +112,7 @@ class MovesView(LoginRequiredMixin, View):
                 "moves_template.html",
                 {
                     "asignaturas": self.asignaturas,
+                    "nombre_asignatura": Asignatura.objects.get(COD_ASIGNATURA=cod_asignatura).ASIGNATURA,
                     "mean": move_data["mean"],
                     "total_moves": move_data["total_moves"],
                     "move_details": move_data["move_details"],

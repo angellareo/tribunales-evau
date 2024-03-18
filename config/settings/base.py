@@ -311,3 +311,4 @@ VUE_FRONTEND_USE_TYPESCRIPT = False
 # ------------------------------------------------------------------------------
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS")
+WHITENOISE_MANIFEST_STRICT = env.list("WHITENOISE_MANIFEST_STRICT")

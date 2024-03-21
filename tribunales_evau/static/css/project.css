@@ -1,13 +1,90 @@
 /* These styles are generated from project.scss. */
-
 .alert-debug {
   color: black;
   background-color: white;
   border-color: #d6e9c6;
 }
-
 .alert-error {
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
+}
+.primaryAction {
+  background-color: #008000;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 16px 40px;
+}
+.primaryAction:active {
+  background-color: #006100;
+}
+.btn {
+  background-color: #008000;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 16px 40px;
+}
+.btn:hover {
+  background-color: #006100;
+}
+.btn:active {
+  background-color: #006100;
+}
+.btn-primary {
+  background-color: #008000;
+  border: none;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 16px 40px;
+}
+.btn-primary:active {
+  background-color: #008000 !important;
+}
+.uam-header {
+  margin: 32px 0;
+  padding: 0 0 12px 0;
+  display: inline-block;
+  position: relative;
+  font-size: 40px;
+  line-height: 1.2em;
+  color: #141414;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  text-align: left;
+}
+/* Redefinimos estilos HTML o bootstrap*/
+.nav-link{
+  color: #141414;
+}
+caption{
+  color: #141414;
+}
+td{
+  color: #141414;
+}
+a {
+  color: #008000;
+}
+h1 {
+  text-transform: uppercase !important;
+  position: relative;
+  padding: 0 0 12px 0;
+  margin-bottom: 20px;
+}
+h1::after {
+  /* display: inline-block; */
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  background-color: #008000;
+  /* size: 2px; */
+  /* color: #008000; */
+  padding: 0 0 4px 0;
 }

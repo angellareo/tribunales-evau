@@ -1,5 +1,5 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Home from './components/Home.vue'
 import TheWelcome from './components/TheWelcome.vue'
 import IconVue from "@/components/icons/IconVue.vue";
 </script>
@@ -19,7 +19,7 @@ import IconVue from "@/components/icons/IconVue.vue";
   </header>
 
   <main>
-    <TheWelcome />
+    <Home />
   </main>
 </template>
 

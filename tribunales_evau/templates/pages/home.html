@@ -1,24 +1,15 @@
 {% extends "base.html" %}
 
-{% load vue_utils %}
-
 {% block content %}
-  <div id="app">
-    <h1>You're almost there!</h1>
-    <hr />
-    <p>To see Vue in action alongside this Django application, run the Vite dev server.</p>
-    <h5>in a terminal, run:</h5>
-    <code>
-      cd vue_frontend
+  <div class="container" id="alerts"></div>
+  <div class="container">
+    <div id="app">
+      <h1>Bienvenidos al reparto...</h1>
+      <p>Se puede incluir una breve descripción de instruccciones y teléfonos de contacto</p>
+      <h5>
+        Como se utiliza por personal interno, las opciones que habitualmente aparecen en una APP no se están desarrollando en este momento&nbsp;&nbsp;
+      </h5>
       <br />
-      npm install
-      <br />
-      npm run dev
-      <br />
-    </code>
-    <br />
+    </div>
   </div>
 {% endblock content %}
-{% block inline_javascript %}
-  <script type="module" crossorigin src="{% vue_bundle_url 'main' %}"></script>
-{% endblock inline_javascript %}

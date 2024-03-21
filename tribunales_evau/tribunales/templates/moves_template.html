@@ -2,16 +2,6 @@
 
 {% block content %}
   <h1>Exam distribution</h1>
-  <!-- Dropdown form to select asignatura -->
-  <form action="{% url 'tribunales:moves' %}" method="get">
-    <label for="asignatura">Select Asignatura:</label>
-    <select name="asignatura" id="asignatura">
-      {% for asignatura in asignaturas %}
-        <option value="{{ asignatura.COD_ASIGNATURA }}">{{ asignatura.ASIGNATURA }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit">Select</button>
-  </form>
   <br />
   <!-- Display mean and total moves -->
   {% if mean %}
@@ -20,23 +10,46 @@
     <p>Mean: {{ mean }}</p>
     <p>Total Moves: {{ total_moves }}</p>
     <!-- Table to show move details -->
-    <table>
-      <thead>
-        <tr>
-          <th>From HQ</th>
-          <th>To HQ</th>
-          <th>Moves</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for move in move_details %}
+    <div id="tablas-y-listas">
+      <table width="80%"
+             border="1"
+             class="table table-striped"
+             summary="Tabla con los movimientos">
+        <caption>
+          Tabla describiendo los movimientos de exámenes entre sedes
+        </caption>
+        <thead>
           <tr>
-            <td>{{ move.from_HQ }}</td>
-            <td>{{ move.to_HQ }}</td>
-            <td>{{ move.num_moves }}</td>
+            <th scope="col">Origen</th>
+            <th scope="col">Destino</th>
+            <th scope="col">Cantidad</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for move in move_details %}
+            <tr>
+              <td>{{ move.from_HQ }}</td>
+              <td>{{ move.to_HQ }}</td>
+              <td>{{ move.num_moves }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br />
+      <form action="{% url 'tribunales:moves' %}" method="get">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <label class="input-group-text" for="select-1">Listado de asignaturas</label>
+          </div>
+          <select name="asignatura" id="asignatura">
+            <option selected>Elige una opción</option>
+            {% for asignatura in asignaturas %}
+              <option value="{{ asignatura.COD_ASIGNATURA }}">{{ asignatura.ASIGNATURA }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="primaryAction btn btn-primary">Seleccionar</button>
+      </form>
+    </div>
   {% endif %}
 {% endblock content %}

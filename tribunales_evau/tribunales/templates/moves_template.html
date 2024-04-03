@@ -35,21 +35,21 @@
           {% endfor %}
         </tbody>
       </table>
-      <br />
-      <form action="{% url 'tribunales:moves' %}" method="get">
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <label class="input-group-text" for="select-1">Listado de asignaturas</label>
-          </div>
-          <select name="asignatura" id="asignatura">
-            <option selected>Elige una opción</option>
-            {% for asignatura in asignaturas %}
-              <option value="{{ asignatura.COD_ASIGNATURA }}">{{ asignatura.ASIGNATURA }}</option>
-            {% endfor %}
-          </select>
+    {% endif %}
+    <br />
+    <form action="{% url 'tribunales:moves' %}" method="get">
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="select-1">Listado de asignaturas</label>
         </div>
-        <button type="submit" class="primaryAction btn btn-primary">Seleccionar</button>
-      </form>
-    </div>
-  {% endif %}
+        <select name="asignatura" id="asignatura">
+          <option selected>Elige una opción</option>
+          {% for asignatura in asignaturas %}
+            <option value="{{ asignatura.COD_ASIGNATURA }}">{{ asignatura.ASIGNATURA }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="primaryAction btn btn-primary">Seleccionar</button>
+    </form>
+  </div>
 {% endblock content %}

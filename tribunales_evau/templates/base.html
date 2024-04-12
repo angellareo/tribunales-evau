@@ -61,9 +61,11 @@
           </a>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
+              <!-- HOME BUTTON IN HEADER
+	            <li class="nav-item active">
                 <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
-              </li>
+		    </li>
+		    -->
               {% if request.user.is_authenticated and user.is_superuser %}
                 <li class="nav-item">
                   <a class="nav-link text-success fw-bold" href="{% url 'rewards:list' %}">Vue Demo</a>
@@ -74,22 +76,22 @@
               </li>
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'users:detail' request.user.pk %}">{% translate "My Profile" %}</a>
+                  <a class="nav-link" href="{% url 'users:detail' request.user.pk %}">{% translate "Perfil" %}</a>
                 </li>
                 <li class="nav-item">
                   {# URL provided by django-allauth/account/urls.py #}
-                  <a class="nav-link" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
+                  <a class="nav-link" href="{% url 'account_logout' %}">{% translate "Desconectar" %}</a>
                 </li>
               {% else %}
                 {% if ACCOUNT_ALLOW_REGISTRATION %}
                   <li class="nav-item">
                     {# URL provided by django-allauth/account/urls.py #}
-                    <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
+                    <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% translate "Registrarse" %}</a>
                   </li>
                 {% endif %}
                 <li class="nav-item">
                   {# URL provided by django-allauth/account/urls.py #}
-                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+                  <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Acceder" %}</a>
                 </li>
               {% endif %}
             </ul>

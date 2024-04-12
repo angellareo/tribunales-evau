@@ -5,10 +5,10 @@
 {% load crispy_forms_tags %}
 
 {% block head_title %}
-  {% translate "Sign In" %}
+  {% translate "Acceder" %}
 {% endblock head_title %}
 {% block inner %}
-  <h1>{% translate "Sign In" %}</h1>
+  <h1>{% translate "Acceder" %}</h1>
   {% get_providers as socialaccount_providers %}
   {% if socialaccount_providers %}
     <p>
@@ -47,6 +47,6 @@
     {% endif %}
     <!--
 	    <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a> -->
-    <button class="primaryAction btn btn-primary" type="submit">{% translate "Sign In" %}</button>
+    <button class="primaryAction btn btn-primary" type="submit">{% translate "Acceder" %}</button>
   </form>
 {% endblock inner %}

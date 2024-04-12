@@ -4,10 +4,10 @@
 {% load crispy_forms_tags %}
 
 {% block head_title %}
-  {% translate "Signup" %}
+  {% translate "Registro" %}
 {% endblock head_title %}
 {% block inner %}
-  <h1>{% translate "Sign Up" %}</h1>
+  <h1>{% translate "Registrarse" %}</h1>
   <p>
     {% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
   </p>
@@ -22,6 +22,6 @@
              name="{{ redirect_field_name }}"
              value="{{ redirect_field_value }}" />
     {% endif %}
-    <button class="btn btn-primary" type="submit">{% translate "Sign Up" %} »</button>
+    <button class="btn btn-primary" type="submit">{% translate "Registrarse" %} »</button>
   </form>
 {% endblock inner %}

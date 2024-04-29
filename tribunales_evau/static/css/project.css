@@ -16,6 +16,7 @@
   text-transform: uppercase;
   letter-spacing: .6px;
   padding: 16px 40px;
+  margin-top: 16px;
 }
 .primaryAction:active {
   background-color: #006100;

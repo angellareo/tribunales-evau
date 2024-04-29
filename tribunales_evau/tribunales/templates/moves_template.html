@@ -4,7 +4,9 @@
 
 {% block content %}
   <h1>{% translate "Reparto de exámenes" %}</h1>
-  <p>{% translate "Selecciona la asignatura de EvAU de la que obtener la tabla de repartos." %}</p>
+  <p>
+    {% translate "Selecciona la asignatura de EvAU de la que obtener la tabla de repartos o haz click en Obtener XLS para obtener una hoja de reparto por sedes." %}
+  </p>
   <br />
   <!-- Display mean and total moves -->
   {% if mean %}
@@ -31,8 +33,8 @@
         <tbody>
           {% for move in move_details %}
             <tr>
-              <td>{{ move.from_HQ }}</td>
-              <td>{{ move.to_HQ }}</td>
+              <td>{{ move.from_HQ }} ({{ move.from_fecha }})</td>
+              <td>{{ move.to_HQ }} ({{ move.to_fecha }})</td>
               <td>{{ move.num_moves }}</td>
             </tr>
           {% endfor %}
@@ -53,6 +55,9 @@
         </select>
       </div>
       <button type="submit" class="primaryAction btn btn-primary">Seleccionar</button>
+    </form>
+    <form action="{% url 'tribunales:get_xls' %}" method="get">
+      <button type="submit" class="primaryAction btn btn-primary">Obtener Hoja de Reparto</button>
     </form>
   </div>
 {% endblock content %}

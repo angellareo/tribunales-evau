@@ -2,12 +2,12 @@ import os
 
 from django.conf import settings
 from django.test import TestCase
-from tribunales.models import Asignatura, Headquarter, Sede
+from tribunales.models import Asignatura, Evaluador, Examen, Sede
 
 from .views import get_moves
 
 
-class HeadquartersMoveTestCase1(TestCase):
+class MoveTestCase1(TestCase):
     def setUp(self):
         self.asignatura = Asignatura.objects.create(COD_ASIGNATURA=1)
 
@@ -16,10 +16,15 @@ class HeadquartersMoveTestCase1(TestCase):
         sede3 = Sede.objects.create(COD_SEDE=3)
         sede4 = Sede.objects.create(COD_SEDE=4)
 
-        Headquarter.objects.create(COD_SEDE=sede1, COD_ASIGNATURA=self.asignatura, EVALUADORES=1, EXAMENES=10)
-        Headquarter.objects.create(COD_SEDE=sede2, COD_ASIGNATURA=self.asignatura, EVALUADORES=1, EXAMENES=3)
-        Headquarter.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EVALUADORES=0, EXAMENES=2)
-        Headquarter.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EVALUADORES=1, EXAMENES=15)
+        Evaluador.objects.create(COD_SEDE=sede1, COD_ASIGNATURA=self.asignatura, EVALUADORES=1)
+        Evaluador.objects.create(COD_SEDE=sede2, COD_ASIGNATURA=self.asignatura, EVALUADORES=1)
+        Evaluador.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EVALUADORES=0)
+        Evaluador.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EVALUADORES=1)
+
+        Examen.objects.create(COD_SEDE=sede1, COD_ASIGNATURA=self.asignatura, EXAMENES=10, FECHA="2023-06-08")
+        Examen.objects.create(COD_SEDE=sede2, COD_ASIGNATURA=self.asignatura, EXAMENES=3, FECHA="2023-06-08")
+        Examen.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EXAMENES=2, FECHA="2023-06-08")
+        Examen.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EXAMENES=15, FECHA="2023-06-08")
 
     def test_get_moves(self):
         # Call get_moves function
@@ -48,7 +53,7 @@ class HeadquartersMoveTestCase1(TestCase):
 #        # Add more assertions as needed for move_details
 
 
-class HeadquartersMoveTestCase2(TestCase):
+class MoveTestCase2(TestCase):
     def setUp(self):
         test_files_dir = os.path.join(settings.BASE_DIR, "tribunales_evau/tribunales/testfiles")
 
@@ -72,19 +77,20 @@ class HeadquartersMoveTestCase2(TestCase):
             with open(filepath) as file:
                 # Read data from the text file
                 lines = file.readlines()
-                headquarter_data = [tuple(map(int, line.strip("| ").split(","))) for line in lines[2:-2]]
-                headquarter_data.insert(0, lines[1][-7:-1].strip("| ").split(","))
+                evaluador_data = [tuple(map(int, line.strip("| ").split(","))) for line in lines[2:-2]]
+                evaluador_data.insert(0, lines[1][-7:-1].strip("| ").split(","))
 
                 # Create Sede and Asignatura objects
                 asignatura_name = filename.split("_")[1].split(".")[0]  # Extract asignatura name from filename
                 asignatura = Asignatura.objects.create(ASIGNATURA=asignatura_name)
                 self.asignaturas.append(asignatura)
 
-                # Create Headquarter objects
-                for i, data in enumerate(headquarter_data):
+                # Create objects
+                for i, data in enumerate(evaluador_data):
                     exams, evaluadores = data
-                    Headquarter.objects.create(
-                        COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EVALUADORES=evaluadores, EXAMENES=exams
+                    Evaluador.objects.create(COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EVALUADORES=evaluadores)
+                    Examen.objects.create(
+                        COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EXAMENES=exams, FECHA="2023-06-08"
                     )
 
     def test_get_moves(self):

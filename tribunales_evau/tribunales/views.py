@@ -21,13 +21,7 @@ logger = logging.getLogger(__name__)
 weekday_names_es = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
 
-def get_moves(asignatura):
-    move_data = cache.get(str(asignatura))
-
-    if move_data is not None:
-        return move_data
-
-    logger.debug("Recalculating moves for " + str(asignatura))
+def get_hqs(asignatura):
     sedes = Sede.objects.all()
 
     headquarter_data = {}
@@ -55,40 +49,25 @@ def get_moves(asignatura):
             evals = 0
     logger.debug("hq_data: " + str(headquarter_data))
 
-    if sum(data["evals"] for data in headquarter_data.values()) == 0:
-        logger.debug("No data in DB")
-        return {"mean": None, "total_moves": None, "move_details": None}
+    return headquarter_data
 
-    # Calculate mean
-    mean = ceil(
-        sum(data["exams"] for data in headquarter_data.values())
-        / sum(data["evals"] for data in headquarter_data.values())
-    )
 
-    # Create a LP problem
+def problem_solve(headquarter_data, mean, HQs_from, HQs_to):
+    # LP problem
     prob = LpProblem("Headquarters_Movement", LpMinimize)
-
-    # Decision variables
-    HQs = list(headquarter_data.keys())
-    HQs_from = []
-    HQs_to = []
-    for HQ in HQs:
-        if mean * headquarter_data[HQ]["evals"] > headquarter_data[HQ]["exams"]:
-            HQs_to.append(HQ)
-        else:
-            HQs_from.append(HQ)
 
     num_exchanges = LpVariable("num_exchanges", lowBound=0, cat="Integer")  # The number of exchanges
 
-    moves = LpVariable.dicts("moves", (HQs_from, HQs_to), lowBound=0, cat="Integer")
-    exchanges = LpVariable.dicts("exchange", ((i, j) for i in HQs_from for j in HQs_to), cat="Binary")
+    moves = LpVariable.dicts("moves", (HQs_from, HQs_to), lowBound=0, cat="Integer")  # number of moved exams
+    exchanges = LpVariable.dicts("exchange", (HQs_from, HQs_to), cat="Binary")  # binary to sum exchanges between sedes
+    # =/= number of moved exams
 
     # Constraints
     for i in HQs_from:
         for j in HQs_to:
             prob += moves[i][j] >= 0
             prob += (
-                moves[i][j] <= headquarter_data[i]["exams"] * exchanges[i, j]
+                moves[i][j] <= headquarter_data[i]["exams"] * exchanges[i][j]
             )  # No movements allowed if exchange[i][j] = 0
             prob += moves[i][j] <= max(
                 0,
@@ -109,27 +88,66 @@ def get_moves(asignatura):
             >= (mean * headquarter_data[j]["evals"]) - headquarter_data[j]["exams"]
         )
 
-    # Total number of exams moved - not needed
+    # Total number of exams moved -> not needed
     # prob += num_moves == lpSum(moves[i][j] for i in HQ for j in HQ)
 
-    # Define total number of exchanges
-    prob += num_exchanges == lpSum([exchanges[i, j] for i in HQs_from for j in HQs_to])
+    # Total number of exchanges
+    prob += num_exchanges == lpSum([exchanges[i][j] for i in HQs_from for j in HQs_to])
 
-    # Objective: minimize the number of exchanges
+    # Objective: minimize num_exchanges
     prob += num_exchanges
 
-    # prob.solve(PULP_CBC_CMD(msg=False, options=['TimeLimit=60']))
+    # prob.solve(PULP_CBC_CMD(msg=False, options=['TimeLimit=60'], mip=True)) # Time-limited version
     prob.solve(PULP_CBC_CMD(msg=False, mip=True))
 
-    # Output the results
-    total_moves = value(prob.objective)
     move_details = {}
-    for i in HQs_from:
-        for j in HQs_to:
-            if value(moves[i][j]) > 0:
-                if i not in move_details:
-                    move_details[i] = {}
-                move_details[i][j] = int(value(moves[i][j]))
+    for HQ_from in moves:
+        for HQ_to in moves[HQ_from]:
+            if int(value(moves[HQ_from][HQ_to])) > 0:
+                if HQ_from not in move_details:
+                    move_details[HQ_from] = {}
+                move_details[HQ_from][HQ_to] = int(value(moves[HQ_from][HQ_to]) * value(exchanges[HQ_from][HQ_to]))
+                # print(str(HQ_from)+","+str(HQ_to)+": "+str(value(moves[HQ_from][HQ_to]))+
+                #       "*"+str(value(exchanges[HQ_from][HQ_to]))+" = "+str(move_details[HQ_from][HQ_to]))
+
+    return move_details
+
+
+def get_moves(asignatura):
+    move_data = cache.get(str(asignatura))
+
+    if move_data is not None:
+        return move_data
+
+    logger.debug("Recalculating moves for " + str(asignatura))
+
+    headquarter_data = get_hqs(asignatura)
+
+    if sum(data["evals"] for data in headquarter_data.values()) == 0:
+        logger.debug("No data in DB")
+        return {"mean": None, "total_moves": None, "move_details": None}
+
+    # Calcular media
+    mean = ceil(
+        sum(data["exams"] for data in headquarter_data.values())
+        / sum(data["evals"] for data in headquarter_data.values())
+    )
+
+    HQs = list(headquarter_data.keys())
+    HQs_from = []
+    HQs_to = []
+    for HQ in HQs:
+        if mean * headquarter_data[HQ]["evals"] > headquarter_data[HQ]["exams"]:
+            HQs_to.append(HQ)
+        else:
+            HQs_from.append(HQ)
+
+    move_details = problem_solve(headquarter_data, mean, HQs_from, HQs_to)
+
+    total_moves = 0
+    for key in move_details:
+        total_moves += sum(move_details[key].values())
+
     move_data = {"mean": mean, "total_moves": total_moves, "move_details": move_details}
 
     cache.set(str(asignatura), move_data, timeout=None)
@@ -161,15 +179,16 @@ class MovesView(LoginRequiredMixin, View):
                         from_sede = Sede.objects.get(COD_SEDE=from_sede_id).UBICACION
                         to_sede = Sede.objects.get(COD_SEDE=to_sede_id).UBICACION
                         n_exams = int(move_data["move_details"][from_HQ][to_HQ])
-                        move_details.append(
-                            {
-                                "from_HQ": from_sede,
-                                "from_fecha": from_fecha,
-                                "to_HQ": to_sede,
-                                "to_fecha": to_fecha,
-                                "num_moves": n_exams,
-                            }
-                        )
+                        if n_exams > 0:
+                            move_details.append(
+                                {
+                                    "from_HQ": from_sede,
+                                    "from_fecha": from_fecha,
+                                    "to_HQ": to_sede,
+                                    "to_fecha": to_fecha,
+                                    "num_moves": n_exams,
+                                }
+                            )
             return render(
                 request,
                 "moves_template.html",
@@ -256,24 +275,25 @@ class MovesXLSView(LoginRequiredMixin, View):
                 HQ = str(examen.COD_SEDE_id) + "_" + str(examen.FECHA)
                 if HQ in moves["move_details"]:
                     for to_HQ in moves["move_details"][HQ].keys():
-                        sede_destino = to_HQ.split("_")[0]
-                        row_data = [
-                            weekday_names_es[examen.FECHA.isoweekday() - 1],
-                            examen.COD_ASIGNATURA.ASIGNATURA,
-                            examen.EXAMENES,
-                            evaluadores,
-                            moves["mean"],  # media_uam,
-                            moves["move_details"][HQ][to_HQ],  # envio_teoricos,
-                            " ",  # envio_reales,
-                            sede_destino,  # envio_sede_destino,
-                            " ",  # recibido_teoricos,
-                            " ",  # recibido_reales,
-                            " ",  # asignatura.recibido_sede_origen
-                        ]
-                        ws.append(row_data)
+                        if moves["move_details"][HQ][to_HQ] > 0:
+                            sede_destino = to_HQ.split("_")[0]
+                            row_data = [
+                                weekday_names_es[examen.FECHA.isoweekday() - 1],
+                                examen.COD_ASIGNATURA.ASIGNATURA,
+                                examen.EXAMENES,
+                                evaluadores,
+                                moves["mean"],  # media_uam,
+                                moves["move_details"][HQ][to_HQ],  # envio_teoricos,
+                                " ",  # envio_reales,
+                                sede_destino,  # envio_sede_destino,
+                                " ",  # recibido_teoricos,
+                                " ",  # recibido_reales,
+                                " ",  # asignatura.recibido_sede_origen
+                            ]
+                            ws.append(row_data)
                 else:
                     for from_HQ in moves["move_details"].keys():
-                        if HQ in moves["move_details"][from_HQ].keys():
+                        if HQ in moves["move_details"][from_HQ].keys() and moves["move_details"][from_HQ][HQ] > 0:
                             sede_origen = from_HQ.split("_")[0]
                             row_data = [
                                 weekday_names_es[examen.FECHA.isoweekday() - 1],

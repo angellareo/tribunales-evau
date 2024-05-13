@@ -33,8 +33,8 @@
         <tbody>
           {% for move in move_details %}
             <tr>
-              <td>{{ move.from_HQ }} ({{ move.from_fecha }})</td>
-              <td>{{ move.to_HQ }} ({{ move.to_fecha }})</td>
+              <td>{{ move.from_HQ }}</td>
+              <td>{{ move.to_HQ }}</td>
               <td>{{ move.num_moves }}</td>
             </tr>
           {% endfor %}
@@ -49,8 +49,8 @@
         </div>
         <select name="asignatura" id="asignatura">
           <option selected>Elige una opción</option>
-          {% for asignatura in asignaturas %}
-            <option value="{{ asignatura.COD_ASIGNATURA }}">{{ asignatura.ASIGNATURA }}</option>
+          {% for cod_asignatura, nombre_asignatura in asignaturas %}
+            <option value="{{ cod_asignatura }}">{{ nombre_asignatura }}</option>
           {% endfor %}
         </select>
       </div>

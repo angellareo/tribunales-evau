@@ -9,6 +9,7 @@ from .views import get_moves
 
 class MoveTestCase1(TestCase):
     def setUp(self):
+        self.fecha = "2023-06-08"
         self.asignatura = Asignatura.objects.create(COD_ASIGNATURA=1)
 
         sede1 = Sede.objects.create(COD_SEDE=1)
@@ -21,18 +22,18 @@ class MoveTestCase1(TestCase):
         Evaluador.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EVALUADORES=0)
         Evaluador.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EVALUADORES=1)
 
-        Examen.objects.create(COD_SEDE=sede1, COD_ASIGNATURA=self.asignatura, EXAMENES=10, FECHA="2023-06-08")
-        Examen.objects.create(COD_SEDE=sede2, COD_ASIGNATURA=self.asignatura, EXAMENES=3, FECHA="2023-06-08")
-        Examen.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EXAMENES=2, FECHA="2023-06-08")
-        Examen.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EXAMENES=15, FECHA="2023-06-08")
+        Examen.objects.create(COD_SEDE=sede1, COD_ASIGNATURA=self.asignatura, EXAMENES=10, FECHA=self.fecha)
+        Examen.objects.create(COD_SEDE=sede2, COD_ASIGNATURA=self.asignatura, EXAMENES=3, FECHA=self.fecha)
+        Examen.objects.create(COD_SEDE=sede3, COD_ASIGNATURA=self.asignatura, EXAMENES=2, FECHA=self.fecha)
+        Examen.objects.create(COD_SEDE=sede4, COD_ASIGNATURA=self.asignatura, EXAMENES=15, FECHA=self.fecha)
 
     def test_get_moves(self):
         # Call get_moves function
-        moves_data = get_moves(self.asignatura)
+        moves_data = get_moves(self.asignatura, self.fecha)
 
         # Expected results (you need to define these based on your logic)
         expected_mean = 10  # Sample expected mean
-        expected_total_moves = 3  # Sample expected total moves
+        expected_total_moves = 7  # Sample expected total moves
         print(moves_data["move_details"])
         # expected_move_details = [
         #         {'from_HQ': 3, 'to_HQ': 2, 'num_moves': 2},
@@ -55,6 +56,7 @@ class MoveTestCase1(TestCase):
 
 class MoveTestCase2(TestCase):
     def setUp(self):
+        self.fecha = "2023-06-08"
         test_files_dir = os.path.join(settings.BASE_DIR, "tribunales_evau/tribunales/testfiles")
 
         # Create Sede objects if they don't exist yet
@@ -76,9 +78,13 @@ class MoveTestCase2(TestCase):
             filepath = os.path.join(test_files_dir, filename)
             with open(filepath) as file:
                 # Read data from the text file
-                lines = file.readlines()
-                evaluador_data = [tuple(map(int, line.strip("| ").split(","))) for line in lines[2:-2]]
-                evaluador_data.insert(0, lines[1][-7:-1].strip("| ").split(","))
+                lines = data = "".join(file.readlines()[1:-1])
+                evaluador_data = [
+                    tuple(map(int, line.strip().split("|")[1].split(",")))
+                    for line in lines.split("\n")
+                    if line.strip()
+                ]
+                print(evaluador_data)
 
                 # Create Sede and Asignatura objects
                 asignatura_name = filename.split("_")[1].split(".")[0]  # Extract asignatura name from filename
@@ -90,7 +96,7 @@ class MoveTestCase2(TestCase):
                     exams, evaluadores = data
                     Evaluador.objects.create(COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EVALUADORES=evaluadores)
                     Examen.objects.create(
-                        COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EXAMENES=exams, FECHA="2023-06-08"
+                        COD_SEDE=sedes[i], COD_ASIGNATURA=asignatura, EXAMENES=exams, FECHA=self.fecha
                     )
 
     def test_get_moves(self):
@@ -102,7 +108,7 @@ class MoveTestCase2(TestCase):
         for asignatura in self.asignaturas:
             print("")
             print("Asignatura: " + asignatura.ASIGNATURA)
-            moves_data = get_moves(asignatura)
+            moves_data = get_moves(asignatura, self.fecha)
 
             print("Mean: " + str(moves_data["mean"]))
             print("Moves: " + str(moves_data["total_moves"]))

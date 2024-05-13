@@ -291,7 +291,7 @@ class MovesXLSView(LoginRequiredMixin, View):
                 HQ = str(examen.COD_SEDE_id)
                 if HQ in moves["move_details"]:
                     for to_HQ in moves["move_details"][HQ].keys():
-                        if moves["move_details"][HQ][to_HQ] > 0:
+                        if moves["move_details"][HQ][to_HQ] > 5:
                             row_data = [
                                 weekday_names_es[examen.FECHA.isoweekday() - 1],
                                 examen.COD_ASIGNATURA.ASIGNATURA,
@@ -308,7 +308,7 @@ class MovesXLSView(LoginRequiredMixin, View):
                             ws.append(row_data)
                 else:
                     for from_HQ in moves["move_details"].keys():
-                        if HQ in moves["move_details"][from_HQ].keys() and moves["move_details"][from_HQ][HQ] > 0:
+                        if HQ in moves["move_details"][from_HQ].keys() and moves["move_details"][from_HQ][HQ] > 5:
                             row_data = [
                                 weekday_names_es[examen.FECHA.isoweekday() - 1],
                                 examen.COD_ASIGNATURA.ASIGNATURA,

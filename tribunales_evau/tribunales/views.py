@@ -289,40 +289,41 @@ class MovesXLSView(LoginRequiredMixin, View):
                 moves = self.moves_data[examen.COD_ASIGNATURA_id]
 
                 HQ = str(examen.COD_SEDE_id)
-                if HQ in moves["move_details"]:
-                    for to_HQ in moves["move_details"][HQ].keys():
-                        if moves["move_details"][HQ][to_HQ] > 5:
-                            row_data = [
-                                weekday_names_es[examen.FECHA.isoweekday() - 1],
-                                examen.COD_ASIGNATURA.ASIGNATURA,
-                                examen.EXAMENES,
-                                evaluadores,
-                                moves["mean"],  # media_uam,
-                                moves["move_details"][HQ][to_HQ],  # envio_teoricos,
-                                " ",  # envio_reales,
-                                to_HQ,  # envio_sede_destino,
-                                " ",  # recibido_teoricos,
-                                " ",  # recibido_reales,
-                                " ",  # asignatura.recibido_sede_origen
-                            ]
-                            ws.append(row_data)
-                else:
-                    for from_HQ in moves["move_details"].keys():
-                        if HQ in moves["move_details"][from_HQ].keys() and moves["move_details"][from_HQ][HQ] > 5:
-                            row_data = [
-                                weekday_names_es[examen.FECHA.isoweekday() - 1],
-                                examen.COD_ASIGNATURA.ASIGNATURA,
-                                examen.EXAMENES,
-                                evaluadores,
-                                moves["mean"],  # media_uam,
-                                " ",  # envio_teoricos,
-                                " ",  # envio_reales,
-                                " ",  # envio_sede_destino,
-                                moves["move_details"][from_HQ][HQ],  # recibido_teoricos,
-                                " ",  # recibido_reales,
-                                from_HQ,  # asignatura.recibido_sede_origen
-                            ]
-                            ws.append(row_data)
+                if "move_details" in moves and moves["move_details"] is not None:
+                    if HQ in moves["move_details"]:
+                        for to_HQ in moves["move_details"][HQ].keys():
+                            if moves["move_details"][HQ][to_HQ] > 5:
+                                row_data = [
+                                    weekday_names_es[examen.FECHA.isoweekday() - 1],
+                                    examen.COD_ASIGNATURA.ASIGNATURA,
+                                    examen.EXAMENES,
+                                    evaluadores,
+                                    moves["mean"],  # media_uam,
+                                    moves["move_details"][HQ][to_HQ],  # envio_teoricos,
+                                    " ",  # envio_reales,
+                                    to_HQ,  # envio_sede_destino,
+                                    " ",  # recibido_teoricos,
+                                    " ",  # recibido_reales,
+                                    " ",  # asignatura.recibido_sede_origen
+                                ]
+                                ws.append(row_data)
+                    else:
+                        for from_HQ in moves["move_details"].keys():
+                            if HQ in moves["move_details"][from_HQ].keys() and moves["move_details"][from_HQ][HQ] > 5:
+                                row_data = [
+                                    weekday_names_es[examen.FECHA.isoweekday() - 1],
+                                    examen.COD_ASIGNATURA.ASIGNATURA,
+                                    examen.EXAMENES,
+                                    evaluadores,
+                                    moves["mean"],  # media_uam,
+                                    " ",  # envio_teoricos,
+                                    " ",  # envio_reales,
+                                    " ",  # envio_sede_destino,
+                                    moves["move_details"][from_HQ][HQ],  # recibido_teoricos,
+                                    " ",  # recibido_reales,
+                                    from_HQ,  # asignatura.recibido_sede_origen
+                                ]
+                                ws.append(row_data)
         # Save the workbook to the response
         logger.debug("saving workbook")
         wb.save(response)
